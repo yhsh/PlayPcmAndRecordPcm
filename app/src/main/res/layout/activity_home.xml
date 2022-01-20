@@ -8,19 +8,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="kSongWriteRead"
-        android:text="进入K歌demo页面" />
+        android:text="进入K歌demo页面边录音边播放录音" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="kSong"
-        android:text="进入K歌demo页面"
-        android:visibility="gone" />
+        android:text="进入K歌demo页面只录音不会播放录音" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="recordSong"
-        android:text="进入录音demo页面"
-        android:visibility="gone" />
+        android:text="进入录音demo采样率16000" />
 </LinearLayout>
