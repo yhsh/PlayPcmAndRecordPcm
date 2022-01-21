@@ -143,18 +143,12 @@ public class PlayByteManagerUtils {
         }
     }
 
-    public void playPcm(boolean isChecked) {
-        if (isChecked) {
-            //两首一起播放
-            mExecutorService.execute(() -> playPcmData(filePathList.get(0)));
-            //播放第二次录音的伴奏
+    public void playPcm() {
+        //两首一起播放
+        mExecutorService.execute(() -> playPcmData(filePathList.get(0)));
+        //播放第二次录音的伴奏
 //           mExecutorService.execute(() -> playPcmData(filePathList.get(1)));
-            //播放固定伴奏
-            mExecutorService.execute(this::playBanZou);
-        } else {
-            //只播放最后一次录音
-            playPcmData(recordFile);
-        }
+        //播放固定伴奏
     }
 
     public void playPcm(File file) {
@@ -197,47 +191,6 @@ public class PlayByteManagerUtils {
                     float time = (endTime - startTime) / 1000f;
                     Log.e(TAG, "播放原声完成总计：" + time + "s");
                     showToast("播放原声完成总时长为：" + time + "s");
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "播放异常: " + e.getMessage());
-            showToast("播放异常: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * 播放Pcm流,边读取边播
-     */
-    private void playBanZou() {
-        try {
-            InputStream inputStream = weakReference.get().getResources().openRawResource(R.raw.xiayiye5);
-            DataInputStream dis = new DataInputStream(new BufferedInputStream(inputStream));
-            //最小缓存区
-            int bufferSizeInBytes = AudioTrack.getMinBufferSize(sampleRateInHz, channelConfiguration, audioEncoding);
-            AudioTrack player = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRateInHz, channelConfiguration, audioEncoding, bufferSizeInBytes, AudioTrack.MODE_STREAM);
-            byte[] data = new byte[bufferSizeInBytes];
-            long startTime = System.currentTimeMillis();
-            //开始播放
-            player.play();
-            while (true) {
-                int i = 0;
-                while (dis.available() > 0 && i < data.length) {
-                    data[i] = dis.readByte();
-                    i++;
-                }
-                player.write(data, 0, data.length);
-                //表示读取完了
-                if (i != bufferSizeInBytes) {
-                    player.stop();//停止播放
-                    player.release();//释放资源
-                    dis.close();
-                    long endTime = System.currentTimeMillis();
-                    float time = (endTime - startTime) / 1000f;
-                    Log.e(TAG, "播放伴奏完成总计：" + time + "s");
-                    showToast("播放伴奏完成总时长为：" + time + "s");
                     break;
                 }
             }

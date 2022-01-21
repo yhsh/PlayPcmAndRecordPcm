@@ -53,7 +53,7 @@ public class KSongMainActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_ksong);
         PlayByteManagerUtils.getInstance().setContext(new WeakReference<>(getApplicationContext()));
         songPathReceiver = new SongPathReceiver();
         IntentFilter intentFilter = new IntentFilter();
@@ -63,8 +63,6 @@ public class KSongMainActivity extends AppCompatActivity implements View.OnClick
         startAudio.setOnClickListener(this);
         stopAudio = findViewById(R.id.stopAudio);
         stopAudio.setOnClickListener(this);
-        CheckBox cbTogetherPlay = findViewById(R.id.cb_together_play);
-        cbTogetherPlay.setOnCheckedChangeListener((buttonView, isChecked) -> this.isChecked = isChecked);
         playAudio = findViewById(R.id.playAudio);
         playAudio.setOnClickListener(this);
         stopVoice = findViewById(R.id.stopVoice);
@@ -131,7 +129,7 @@ public class KSongMainActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.playAudio:
                 //两个一起播放
-                PlayByteManagerUtils.getInstance().playPcm(isChecked);
+                PlayByteManagerUtils.getInstance().playPcm();
                 buttonEnabled(true, false, false);
                 printLog("播放录音");
                 receiverServerData();
