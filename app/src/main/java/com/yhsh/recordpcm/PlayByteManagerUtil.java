@@ -86,37 +86,7 @@ public class PlayByteManagerUtil {
 
     public void startRecord() {
         Log.e(TAG, "开始录音");
-        //生成PCM文件
-        String fileName = DateFormat.format("yyyyMMdd_HHmmss", Calendar.getInstance(Locale.getDefault())) + "_xiayiye5.pcm";
-        File file = new File(weakReference.get().getExternalCacheDir(), "audio_cache");
-        if (!file.exists()) {
-            file.mkdir();
-        }
-        String audioSaveDir = file.getAbsolutePath();
-        Log.e(TAG, audioSaveDir);
-        recordFile = new File(audioSaveDir, fileName);
-        Log.e(TAG, "生成文件" + recordFile);
-        //如果存在，就先删除再创建
-        if (recordFile.exists()) {
-            recordFile.delete();
-            Log.e(TAG, "删除文件");
-        }
         try {
-            recordFile.createNewFile();
-            Log.e(TAG, "创建文件");
-        } catch (IOException e) {
-            Log.e(TAG, "未能创建");
-            throw new IllegalStateException("未能创建" + recordFile.toString());
-        }
-        if (filePathList.size() == 2) {
-            filePathList.clear();
-        }
-        filePathList.add(recordFile);
-        try {
-            //输出流
-            OutputStream os = new FileOutputStream(recordFile);
-            BufferedOutputStream bos = new BufferedOutputStream(os);
-            DataOutputStream dos = new DataOutputStream(bos);
             int bufferSize = AudioRecord.getMinBufferSize(sampleRateInHz, AudioFormat.CHANNEL_IN_STEREO, audioEncoding);
             AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRateInHz, AudioFormat.CHANNEL_IN_STEREO, audioEncoding, bufferSize);
 
@@ -135,7 +105,6 @@ public class PlayByteManagerUtil {
                 player.write(buffer, 0, bufferReadResult);
             }
             audioRecord.stop();
-            dos.close();
             long endTime = System.currentTimeMillis();
             float recordTime = (endTime - startTime) / 1000f;
             Log.e(TAG, "录音总时长：" + recordTime + "s");
@@ -146,17 +115,7 @@ public class PlayByteManagerUtil {
     }
 
     public void playPcm(boolean isChecked) {
-        if (isChecked) {
-            //两首一起播放
-            mExecutorService.execute(() -> playPcmData(filePathList.get(0)));
-            //播放第二次录音的伴奏
-//           mExecutorService.execute(() -> playPcmData(filePathList.get(1)));
-            //播放固定伴奏
-            mExecutorService.execute(this::playBanZou);
-        } else {
-            //只播放最后一次录音
-            playPcmData(recordFile);
-        }
+        mExecutorService.execute(this::playBanZou);
     }
 
     public void playPcm(File file) {

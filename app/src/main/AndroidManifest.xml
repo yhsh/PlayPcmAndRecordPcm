@@ -23,7 +23,7 @@
         </activity>
         <activity android:name=".KSongMainActivity" />
         <activity android:name=".Pcm16MainActivity" />
-        <activity android:name=".KSongWriteReadMainActivity" />
+        <activity android:name=".KSongWriteReadActivity" />
     </application>
 
 </manifest>

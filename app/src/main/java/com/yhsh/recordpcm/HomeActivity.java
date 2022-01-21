@@ -19,7 +19,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
     public void kSongWriteRead(View view) {
-        startActivity(new Intent(this, KSongWriteReadMainActivity.class));
+        startActivity(new Intent(this, KSongWriteReadActivity.class));
     }
 
     public void kSong(View view) {
