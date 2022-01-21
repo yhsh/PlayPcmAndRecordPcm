@@ -118,6 +118,7 @@ public class PlayByteManagerUtils {
             BufferedOutputStream bos = new BufferedOutputStream(os);
             DataOutputStream dos = new DataOutputStream(bos);
             int bufferSize = AudioRecord.getMinBufferSize(sampleRateInHz, AudioFormat.CHANNEL_IN_STEREO, audioEncoding);
+            Log.e("打印大小bufferSizeInBytes:", +bufferSize + "=");
             AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRateInHz, AudioFormat.CHANNEL_IN_STEREO, audioEncoding, bufferSize);
 
             byte[] buffer = new byte[bufferSize];
@@ -170,6 +171,7 @@ public class PlayByteManagerUtils {
             DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(recordFiles)));
             //最小缓存区
             int bufferSizeInBytes = AudioTrack.getMinBufferSize(sampleRateInHz, channelConfiguration, audioEncoding);
+            Log.e("打印大小bufferSizeInBytes:", +bufferSizeInBytes + "=");
             AudioTrack player = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRateInHz, channelConfiguration, audioEncoding, bufferSizeInBytes, AudioTrack.MODE_STREAM);
             byte[] data = new byte[bufferSizeInBytes];
             long startTime = System.currentTimeMillis();
