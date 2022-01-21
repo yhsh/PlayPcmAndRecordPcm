@@ -49,16 +49,13 @@ public class Pcm16MainActivity extends AppCompatActivity implements View.OnClick
     private boolean isChecked;
     private boolean playStatue = true;
     private Button stopVoice;
-    private SongPathReceiver songPathReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        songPathReceiver = new SongPathReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.intent.action.K_SONG_DEMO");
-        registerReceiver(songPathReceiver, intentFilter);
         startAudio = findViewById(R.id.startAudio);
         startAudio.setOnClickListener(this);
         stopAudio = findViewById(R.id.stopAudio);
@@ -81,25 +78,6 @@ public class Pcm16MainActivity extends AppCompatActivity implements View.OnClick
             intent.setAction("android.intent.action.K_SONG_DEMO");
             sendBroadcast(intent);
         });
-    }
-
-    public static class SongPathReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (null != intent) {
-                String songFilePath = intent.getStringExtra("filepath");
-                Log.e(TAG, "打印歌曲伴奏路径:" + songFilePath);
-                Toast.makeText(context.getApplicationContext(), "歌曲路径：" + songFilePath, Toast.LENGTH_SHORT).show();
-                File file = new File(songFilePath);
-                if (!file.exists()) {
-                    Log.e(TAG, "打印歌曲伴奏路径不存在！");
-                    Toast.makeText(context.getApplicationContext(), "打印歌曲伴奏路径不存在！" + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Toast.makeText(context.getApplicationContext(), "打印歌曲伴奏路径已存在！" + file, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "打印歌曲伴奏路径已存在！");
-            }
-        }
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -184,10 +162,6 @@ public class Pcm16MainActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (null != songPathReceiver) {
-            //解绑广播
-            unregisterReceiver(songPathReceiver);
-        }
     }
 
     private final Handler handler = new Handler(Looper.getMainLooper());
