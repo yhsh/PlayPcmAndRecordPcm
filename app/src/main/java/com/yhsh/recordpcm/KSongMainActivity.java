@@ -11,7 +11,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +44,6 @@ public class KSongMainActivity extends AppCompatActivity implements View.OnClick
             new LinkedBlockingDeque<>(10),
             Executors.defaultThreadFactory(),
             new ThreadPoolExecutor.AbortPolicy());
-    private boolean isChecked;
     private boolean playStatue = true;
     private Button stopVoice;
     private SongPathReceiver songPathReceiver;
@@ -89,9 +87,6 @@ public class KSongMainActivity extends AppCompatActivity implements View.OnClick
                 Log.e(TAG, "打印歌曲伴奏路径:" + songFilePath);
                 Toast.makeText(context.getApplicationContext(), "歌曲路径：" + songFilePath, Toast.LENGTH_SHORT).show();
                 File file = new File(songFilePath);
-//                PlayByteManagerUtils.getInstance().playPcm(new File("/storage/emulated/0/Android/data/com.yhsh.recordpcm/cache/audio_cache/xiayiye_dt.pcm"));
-//                PlayByteManagerUtils.getInstance().playPcm(new File("/storage/emulated/0/Download/xiayiye5_big.pcm"));
-//                PlayByteManagerUtils.getInstance().playPcm(new File("/storage/emulated/0/Download/xiayiye_dt.pcm"));
                 if (!file.exists()) {
                     Log.e(TAG, "打印歌曲伴奏路径不存在！");
                     Toast.makeText(context.getApplicationContext(), "打印歌曲伴奏路径不存在！" + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
@@ -155,12 +150,9 @@ public class KSongMainActivity extends AppCompatActivity implements View.OnClick
      * @param resultString 返回数据
      */
     private void printLog(final String resultString) {
-        tvAudioSuccess.post(new Runnable() {
-            @Override
-            public void run() {
-                tvAudioSuccess.append(resultString + "\n");
-                mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
-            }
+        tvAudioSuccess.post(() -> {
+            tvAudioSuccess.append(resultString + "\n");
+            mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
         });
     }
 
@@ -221,10 +213,6 @@ public class KSongMainActivity extends AppCompatActivity implements View.OnClick
                             Log.e("客户端接收到的数据为：", "receiver：" + score);
                         }
                         inputStream.close();
-
-//                        String score = inputStream.readUTF();
-//                        Log.e("客户端接收到的数据为：", "receiver：" + score);
-//                        handler.post(() -> Toast.makeText(getApplicationContext(), "客户端接收到的数据为：" + score, Toast.LENGTH_SHORT).show());
                     } else {
                         break;
                     }
