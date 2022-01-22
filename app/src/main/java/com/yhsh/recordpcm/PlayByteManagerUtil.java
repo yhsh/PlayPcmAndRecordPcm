@@ -40,12 +40,7 @@ import java.util.concurrent.TimeUnit;
 public class PlayByteManagerUtil {
     private static final String TAG = "PlayManagerUtils";
     private WeakReference<Context> weakReference;
-    private File recordFile;
     private boolean isRecording;
-    /**
-     * 是否播放,默认播放
-     */
-    private boolean isPlay = true;
     /**
      * 最多只能存2条记录
      */
@@ -114,10 +109,6 @@ public class PlayByteManagerUtil {
         }
     }
 
-    public void playPcm(boolean isChecked) {
-        mExecutorService.execute(this::playBanZou);
-    }
-
     public void playPcm(File file) {
         //两首一起播放
         mExecutorService.execute(() -> playPcmData(file));
@@ -140,13 +131,11 @@ public class PlayByteManagerUtil {
             while (true) {
                 int i = 0;
                 while (dis.available() > 0 && i < data.length) {
-                    if (isPlay) {
-                        data[i] = dis.readByte();
-                        i++;
-                    } else {
-                        Log.e(TAG, "暂停播放：");
-                    }
+                    data[i] = dis.readByte();
+                    i++;
+//                    player.write(data, 0, data.length);
                 }
+                // 经过测试下面的写入byte代码可以放到上面的循环中也可以放到这个注释下面
                 player.write(data, 0, data.length);
                 //表示读取完了
                 if (i != bufferSizeInBytes) {
@@ -167,66 +156,12 @@ public class PlayByteManagerUtil {
         }
     }
 
-
-    /**
-     * 播放Pcm流,边读取边播
-     */
-    private void playBanZou() {
-        try {
-            InputStream inputStream = weakReference.get().getResources().openRawResource(R.raw.xiayiye5);
-            DataInputStream dis = new DataInputStream(new BufferedInputStream(inputStream));
-            //最小缓存区
-            int bufferSizeInBytes = AudioTrack.getMinBufferSize(sampleRateInHz, channelConfiguration, audioEncoding);
-            AudioTrack player = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRateInHz, channelConfiguration, audioEncoding, bufferSizeInBytes, AudioTrack.MODE_STREAM);
-            byte[] data = new byte[bufferSizeInBytes];
-            long startTime = System.currentTimeMillis();
-            //开始播放
-            player.play();
-            while (true) {
-                int i = 0;
-                while (dis.available() > 0 && i < data.length) {
-                    data[i] = dis.readByte();
-                    i++;
-                }
-                player.write(data, 0, data.length);
-                //表示读取完了
-                if (i != bufferSizeInBytes) {
-                    player.stop();//停止播放
-                    player.release();//释放资源
-                    dis.close();
-                    long endTime = System.currentTimeMillis();
-                    float time = (endTime - startTime) / 1000f;
-                    Log.e(TAG, "播放伴奏完成总计：" + time + "s");
-                    showToast("播放伴奏完成总时长为：" + time + "s");
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "播放异常: " + e.getMessage());
-            showToast("播放异常: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public File getRecordFile() {
-        return recordFile;
-    }
-
     public void setRecord(boolean isRecording) {
         this.isRecording = isRecording;
     }
 
     private void showToast(String msg) {
         handler.post(() -> Toast.makeText(weakReference.get(), msg, Toast.LENGTH_LONG).show());
-    }
-
-    /**
-     * 设置播放状态
-     *
-     * @param isPlay 是否播放原声
-     */
-    public void setPlayStatus(boolean isPlay) {
-        this.isPlay = isPlay;
     }
 
     public void setContext(WeakReference<Context> weakReference) {
